@@ -1,6 +1,15 @@
-import yarnLockfile from '@yarnpkg/lockfile';
+import { createRequire } from 'node:module';
 import type { ParsedLockfile, ResolvedPackage } from '../../../types/dependencyGraph.js';
+import type { YarnLockParseResult } from '../../../types/yarnpkg-lockfile.js';
 import { AppError } from '../../../utils/AppError.js';
+
+// @yarnpkg/lockfile's CJS bundle confuses ESM named/default-import interop
+// differently across runtimes (Node's native loader vs. Vite/Vitest's
+// transform both guess wrong, in opposite ways). Using real `require()`
+// via createRequire sidesteps the ambiguity entirely -- it's the one
+// access pattern verified to work the same everywhere.
+const require = createRequire(import.meta.url);
+const yarnLockfile: { parse(content: string): YarnLockParseResult } = require('@yarnpkg/lockfile');
 
 function splitNameAndRange(spec: string): [name: string, range: string] {
   const atIndex = spec.startsWith('@') ? spec.indexOf('@', 1) : spec.indexOf('@');
