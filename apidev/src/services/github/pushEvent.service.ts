@@ -14,8 +14,11 @@ interface PushCommitPayload {
   author: { name?: string; email?: string; username?: string };
 }
 
+const ZERO_SHA = '0000000000000000000000000000000000000000';
+
 interface PushEventPayload {
   ref: string;
+  before: string;
   after: string;
   deleted: boolean;
   repository: { id: number };
@@ -72,6 +75,7 @@ export async function handlePushEvent(payload: PushEventPayload): Promise<void> 
       $setOnInsert: {
         repositoryId: repo._id,
         commitSha: payload.after,
+        baseSha: payload.before === ZERO_SHA ? undefined : payload.before,
         analysisType: 'push',
         status: 'pending',
         branch,

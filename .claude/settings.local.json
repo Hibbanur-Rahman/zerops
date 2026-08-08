@@ -1,7 +1,21 @@
 {
   "permissions": {
     "allow": [
-      "mcp__zerops__*"
+      "mcp__zerops__*",
+      "Bash(git -C apidev log --oneline -5)",
+      "Bash(git -C webdev log --oneline -5)",
+      "Bash(git -C apidev status)",
+      "Bash(git -C webdev status)",
+      "Bash(rm -rf apidev/.git webdev/.git)",
+      "Bash(git add *)",
+      "Bash(git rm *)",
+      "Bash(grep -iE 'node_modules|\\\\.env$|\\\\.env\\\\.local|\\\\.next/|dist/|coverage/')",
+      "Bash(echo \"exit:$?\")",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git config *)",
+      "Bash(env)",
+      "Bash(gh auth *)"
     ]
   }
 }

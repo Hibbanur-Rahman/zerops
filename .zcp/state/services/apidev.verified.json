@@ -8,7 +8,7 @@
   "prod": {
     "setupName": "prod",
     "targetHostname": "apistage",
-    "verifiedAt": "2026-08-08T22:24:51Z",
+    "verifiedAt": "2026-08-08T22:37:00Z",
     "summary": "reachable (root path not 2xx — accepted as cosmetic)"
   }
 }

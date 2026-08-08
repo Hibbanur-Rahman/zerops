@@ -12,7 +12,7 @@
     "webstage"
   ],
   "createdAt": "2026-08-08T21:04:53Z",
-  "lastActivityAt": "2026-08-08T22:24:51Z",
+  "lastActivityAt": "2026-08-08T22:38:14Z",
   "deploys": {
     "apidev": [
       {
@@ -26,6 +26,12 @@
       {
         "attemptedAt": "2026-08-08T21:28:32Z",
         "succeededAt": "2026-08-08T21:30:07Z",
+        "setup": "prod",
+        "strategy": "zcli"
+      },
+      {
+        "attemptedAt": "2026-08-08T22:32:45Z",
+        "succeededAt": "2026-08-08T22:34:44Z",
         "setup": "prod",
         "strategy": "zcli"
       }
@@ -48,6 +54,12 @@
       {
         "attemptedAt": "2026-08-08T22:19:10Z",
         "succeededAt": "2026-08-08T22:22:16Z",
+        "setup": "prod",
+        "strategy": "zcli"
+      },
+      {
+        "attemptedAt": "2026-08-08T22:34:51Z",
+        "succeededAt": "2026-08-08T22:37:51Z",
         "setup": "prod",
         "strategy": "zcli"
       }
@@ -86,6 +98,12 @@
         "passedAt": "2026-08-08T22:24:51Z",
         "summary": "reachable (root path not 2xx — accepted as cosmetic)",
         "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-08T22:37:00Z",
+        "passedAt": "2026-08-08T22:37:00Z",
+        "summary": "reachable (root path not 2xx — accepted as cosmetic)",
+        "passed": true
       }
     ],
     "webdev": [
@@ -118,6 +136,12 @@
       {
         "attemptedAt": "2026-08-08T22:24:51Z",
         "passedAt": "2026-08-08T22:24:51Z",
+        "summary": "healthy",
+        "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-08T22:38:14Z",
+        "passedAt": "2026-08-08T22:38:14Z",
         "summary": "healthy",
         "passed": true
       }
