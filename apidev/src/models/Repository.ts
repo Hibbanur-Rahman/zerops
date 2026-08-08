@@ -41,4 +41,5 @@ const repositorySchema = new Schema(
 );
 
 export type RepositoryDoc = InferSchemaType<typeof repositorySchema>;
+export type SecurityPolicy = InferSchemaType<typeof securityPolicySchema>;
 export const Repository = model('Repository', repositorySchema);

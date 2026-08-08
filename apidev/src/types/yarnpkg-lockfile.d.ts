@@ -12,6 +12,11 @@ declare module '@yarnpkg/lockfile' {
     object: Record<string, YarnLockEntry>;
   }
 
-  export function parse(content: string): YarnLockParseResult;
-  export function stringify(object: Record<string, YarnLockEntry>): string;
+  interface YarnLockfileModule {
+    parse(content: string): YarnLockParseResult;
+    stringify(object: Record<string, YarnLockEntry>): string;
+  }
+
+  const yarnLockfile: YarnLockfileModule;
+  export default yarnLockfile;
 }

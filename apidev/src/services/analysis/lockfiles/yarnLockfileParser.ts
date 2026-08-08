@@ -1,4 +1,4 @@
-import { parse as parseYarnLock } from '@yarnpkg/lockfile';
+import yarnLockfile from '@yarnpkg/lockfile';
 import type { ParsedLockfile, ResolvedPackage } from '../../../types/dependencyGraph.js';
 import { AppError } from '../../../utils/AppError.js';
 
@@ -11,7 +11,7 @@ function splitNameAndRange(spec: string): [name: string, range: string] {
 export function parseYarnLockfile(content: string): ParsedLockfile {
   let result;
   try {
-    result = parseYarnLock(content);
+    result = yarnLockfile.parse(content);
   } catch {
     throw AppError.badRequest('Invalid yarn.lock: syntax error');
   }
