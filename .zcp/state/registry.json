@@ -1,0 +1,15 @@
+{
+  "version": "1",
+  "sessions": [
+    {
+      "sessionId": "work-1936",
+      "pid": 1936,
+      "startTime": "296387686",
+      "workflow": "work",
+      "projectId": "uHHmmrHhQR6bXeSH6IpIUg",
+      "intent": "Implement the Package Risk Analyzer SaaS end-to-end. Backend (apidev, Express+TypeScript): auth, Mongoose models, GitHub App integration (Octokit, OAuth, webhooks with signature verification + idempotency), BullMQ queues/workers backed by cache (Valkey) for dependency analysis / PR comments / email, npm+OSV.dev+GitHub Advisory security providers, the package risk engine, PR comment + Check Run updates, Resend email notifications, and the full /api/v1 REST surface. Frontend (webdev, Next.js+TS+Tailwind+shadcn): auth pages, GitHub connect/install flow, repositories/analyses/findings/dependencies/pull-requests/settings dashboard, calling the backend only via REST. MongoDB is external (MONGODB_URI secret, not a Zerops service).",
+      "createdAt": "2026-08-08T21:04:53Z",
+      "updatedAt": "2026-08-08T21:04:53Z"
+    }
+  ]
+}

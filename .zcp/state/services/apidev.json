@@ -1,0 +1,15 @@
+{
+  "hostname": "apidev",
+  "mode": "standard",
+  "stageHostname": "apistage",
+  "closeDeployMode": "manual",
+  "closeDeployModeConfirmed": true,
+  "gitPushState": "unconfigured",
+  "buildIntegration": "none",
+  "bootstrapSession": "8d6a7bb2eaf79b42",
+  "bootstrappedAt": "2026-08-08",
+  "firstDeployedAt": "2026-08-08T21:27:15Z",
+  "primarySetupName": "dev",
+  "stageSetupName": "prod",
+  "servesHttp": true
+}

@@ -1,0 +1,126 @@
+{
+  "version": "1",
+  "pid": 1936,
+  "startTime": "296387686",
+  "projectId": "uHHmmrHhQR6bXeSH6IpIUg",
+  "environment": "container",
+  "intent": "Implement the Package Risk Analyzer SaaS end-to-end. Backend (apidev, Express+TypeScript): auth, Mongoose models, GitHub App integration (Octokit, OAuth, webhooks with signature verification + idempotency), BullMQ queues/workers backed by cache (Valkey) for dependency analysis / PR comments / email, npm+OSV.dev+GitHub Advisory security providers, the package risk engine, PR comment + Check Run updates, Resend email notifications, and the full /api/v1 REST surface. Frontend (webdev, Next.js+TS+Tailwind+shadcn): auth pages, GitHub connect/install flow, repositories/analyses/findings/dependencies/pull-requests/settings dashboard, calling the backend only via REST. MongoDB is external (MONGODB_URI secret, not a Zerops service).",
+  "services": [
+    "apidev",
+    "apistage",
+    "webdev",
+    "webstage"
+  ],
+  "createdAt": "2026-08-08T21:04:53Z",
+  "lastActivityAt": "2026-08-08T22:24:51Z",
+  "deploys": {
+    "apidev": [
+      {
+        "attemptedAt": "2026-08-08T21:24:34Z",
+        "succeededAt": "2026-08-08T21:27:15Z",
+        "setup": "dev",
+        "strategy": "zcli"
+      }
+    ],
+    "apistage": [
+      {
+        "attemptedAt": "2026-08-08T21:28:32Z",
+        "succeededAt": "2026-08-08T21:30:07Z",
+        "setup": "prod",
+        "strategy": "zcli"
+      }
+    ],
+    "webdev": [
+      {
+        "attemptedAt": "2026-08-08T21:35:25Z",
+        "succeededAt": "2026-08-08T21:38:24Z",
+        "setup": "dev",
+        "strategy": "zcli"
+      }
+    ],
+    "webstage": [
+      {
+        "attemptedAt": "2026-08-08T21:40:19Z",
+        "succeededAt": "2026-08-08T21:43:13Z",
+        "setup": "prod",
+        "strategy": "zcli"
+      },
+      {
+        "attemptedAt": "2026-08-08T22:19:10Z",
+        "succeededAt": "2026-08-08T22:22:16Z",
+        "setup": "prod",
+        "strategy": "zcli"
+      }
+    ]
+  },
+  "verifies": {
+    "apidev": [
+      {
+        "attemptedAt": "2026-08-08T21:27:51Z",
+        "summary": "http_root: subdomain access not enabled — service is not reachable via HTTP",
+        "passed": false,
+        "failureClass": "verify"
+      },
+      {
+        "attemptedAt": "2026-08-08T21:28:14Z",
+        "passedAt": "2026-08-08T21:28:14Z",
+        "summary": "reachable (root path not 2xx — accepted as cosmetic)",
+        "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-08T22:24:51Z",
+        "passedAt": "2026-08-08T22:24:51Z",
+        "summary": "reachable (root path not 2xx — accepted as cosmetic)",
+        "passed": true
+      }
+    ],
+    "apistage": [
+      {
+        "attemptedAt": "2026-08-08T21:30:36Z",
+        "passedAt": "2026-08-08T21:30:36Z",
+        "summary": "reachable (root path not 2xx — accepted as cosmetic)",
+        "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-08T22:24:51Z",
+        "passedAt": "2026-08-08T22:24:51Z",
+        "summary": "reachable (root path not 2xx — accepted as cosmetic)",
+        "passed": true
+      }
+    ],
+    "webdev": [
+      {
+        "attemptedAt": "2026-08-08T21:43:42Z",
+        "passedAt": "2026-08-08T21:43:42Z",
+        "summary": "healthy",
+        "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-08T22:24:51Z",
+        "passedAt": "2026-08-08T22:24:51Z",
+        "summary": "healthy",
+        "passed": true
+      }
+    ],
+    "webstage": [
+      {
+        "attemptedAt": "2026-08-08T21:43:32Z",
+        "passedAt": "2026-08-08T21:43:32Z",
+        "summary": "healthy",
+        "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-08T22:22:42Z",
+        "passedAt": "2026-08-08T22:22:42Z",
+        "summary": "healthy",
+        "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-08T22:24:51Z",
+        "passedAt": "2026-08-08T22:24:51Z",
+        "summary": "healthy",
+        "passed": true
+      }
+    ]
+  }
+}
