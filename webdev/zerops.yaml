@@ -1,0 +1,53 @@
+zerops:
+  - setup: dev
+    build:
+      base: nodejs@22
+      buildCommands:
+        - npm install
+      deployFiles:
+        - .
+      envVariables:
+        NEXT_PUBLIC_API_URL: https://apidev-2c45-3001.prg1.zerops.app
+    run:
+      base: nodejs@22
+      ports:
+        - port: 3000
+          httpSupport: true
+      envVariables:
+        NODE_ENV: development
+        NEXT_PUBLIC_API_URL: https://apidev-2c45-3001.prg1.zerops.app
+      start: zsc noop --silent
+
+  - setup: prod
+    build:
+      base: nodejs@22
+      buildCommands:
+        - npm install
+        - npm run build
+      deployFiles:
+        - .next
+        - public
+        - package.json
+        - package-lock.json
+        - next.config.ts
+        - node_modules
+      envVariables:
+        NEXT_PUBLIC_API_URL: https://apistage-2c45-3001.prg1.zerops.app
+    deploy:
+      readinessCheck:
+        httpGet:
+          port: 3000
+          path: /
+    run:
+      base: nodejs@22
+      ports:
+        - port: 3000
+          httpSupport: true
+      healthCheck:
+        httpGet:
+          port: 3000
+          path: /
+      envVariables:
+        NODE_ENV: production
+        NEXT_PUBLIC_API_URL: https://apistage-2c45-3001.prg1.zerops.app
+      start: npm run start

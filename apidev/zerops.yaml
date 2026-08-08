@@ -1,0 +1,49 @@
+zerops:
+  - setup: dev
+    build:
+      base: nodejs@22
+      buildCommands:
+        - npm install
+      deployFiles:
+        - .
+    run:
+      base: nodejs@22
+      ports:
+        - port: 3001
+          httpSupport: true
+      envVariables:
+        NODE_ENV: development
+        REDIS_URL: ${cache_connectionString}
+        APP_URL: ${zeropsSubdomain}
+      start: zsc noop --silent
+
+  - setup: prod
+    build:
+      base: nodejs@22
+      buildCommands:
+        - npm install
+        - npm run build
+      deployFiles:
+        - dist
+        - package.json
+        - package-lock.json
+        - node_modules
+    deploy:
+      readinessCheck:
+        httpGet:
+          port: 3001
+          path: /health
+    run:
+      base: nodejs@22
+      ports:
+        - port: 3001
+          httpSupport: true
+      healthCheck:
+        httpGet:
+          port: 3001
+          path: /health
+      envVariables:
+        NODE_ENV: production
+        REDIS_URL: ${cache_connectionString}
+        APP_URL: ${zeropsSubdomain}
+      start: node dist/server.js
