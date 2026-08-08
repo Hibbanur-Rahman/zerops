@@ -9,9 +9,14 @@ function splitNameAndRange(spec: string): [name: string, range: string] {
 }
 
 export function parseYarnLockfile(content: string): ParsedLockfile {
-  const result = parseYarnLock(content);
+  let result;
+  try {
+    result = parseYarnLock(content);
+  } catch {
+    throw AppError.badRequest('Invalid yarn.lock: syntax error');
+  }
   if (result.type !== 'success') {
-    throw AppError.badRequest('Invalid yarn.lock: unable to parse (merge conflict markers or syntax error)');
+    throw AppError.badRequest('Invalid yarn.lock: unable to parse (merge conflict markers)');
   }
 
   const packages: ResolvedPackage[] = [];

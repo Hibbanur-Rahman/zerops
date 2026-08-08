@@ -14,12 +14,14 @@ interface PnpmLockfileRaw {
 }
 
 /**
- * pnpm lockfile keys look like `name@version` or, for peer-qualified
- * snapshots (lockfileVersion 9+), `name@version(peer@1.0.0)`. Strips the
- * parenthetical peer suffix and splits on the last "@" not part of a scope.
+ * pnpm lockfile keys look like `name@version`, `/name@version` (older
+ * lockfileVersion prefixes non-scoped keys with a leading slash), or, for
+ * peer-qualified snapshots (lockfileVersion 9+), `name@version(peer@1.0.0)`.
+ * Strips the parenthetical peer suffix and leading slash, then splits on
+ * the "@" that isn't part of a scope.
  */
 function parsePnpmKey(key: string): { name: string; version: string } | null {
-  const withoutPeerSuffix = key.replace(/\(.*\)$/, '');
+  const withoutPeerSuffix = key.replace(/\(.*\)$/, '').replace(/^\//, '');
   const atIndex = withoutPeerSuffix.startsWith('@') ? withoutPeerSuffix.indexOf('@', 1) : withoutPeerSuffix.indexOf('@');
   if (atIndex === -1) return null;
   return { name: withoutPeerSuffix.slice(0, atIndex), version: withoutPeerSuffix.slice(atIndex + 1) };
