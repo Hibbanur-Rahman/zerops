@@ -12,7 +12,7 @@
     "webstage"
   ],
   "createdAt": "2026-08-08T21:04:53Z",
-  "lastActivityAt": "2026-08-09T17:55:25Z",
+  "lastActivityAt": "2026-08-09T18:06:34Z",
   "deploys": {
     "apidev": [
       {
@@ -66,6 +66,12 @@
         "succeededAt": "2026-08-08T21:38:24Z",
         "setup": "dev",
         "strategy": "zcli"
+      },
+      {
+        "attemptedAt": "2026-08-09T17:53:10Z",
+        "succeededAt": "2026-08-09T18:05:38Z",
+        "setup": "dev",
+        "strategy": "zcli"
       }
     ],
     "webstage": [
@@ -114,6 +120,12 @@
         "passedAt": "2026-08-09T17:55:25Z",
         "summary": "reachable (root path not 2xx — accepted as cosmetic)",
         "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-09T18:06:34Z",
+        "passedAt": "2026-08-09T18:06:34Z",
+        "summary": "reachable (root path not 2xx — accepted as cosmetic)",
+        "passed": true
       }
     ],
     "apistage": [
@@ -146,6 +158,12 @@
         "passedAt": "2026-08-08T23:35:41Z",
         "summary": "reachable (root path not 2xx — accepted as cosmetic)",
         "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-09T18:06:34Z",
+        "passedAt": "2026-08-09T18:06:34Z",
+        "summary": "reachable (root path not 2xx — accepted as cosmetic)",
+        "passed": true
       }
     ],
     "webdev": [
@@ -158,6 +176,12 @@
       {
         "attemptedAt": "2026-08-08T22:24:51Z",
         "passedAt": "2026-08-08T22:24:51Z",
+        "summary": "healthy",
+        "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-09T18:06:34Z",
+        "passedAt": "2026-08-09T18:06:34Z",
         "summary": "healthy",
         "passed": true
       }
@@ -184,6 +208,12 @@
       {
         "attemptedAt": "2026-08-08T22:38:14Z",
         "passedAt": "2026-08-08T22:38:14Z",
+        "summary": "healthy",
+        "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-09T18:06:34Z",
+        "passedAt": "2026-08-09T18:06:34Z",
         "summary": "healthy",
         "passed": true
       }

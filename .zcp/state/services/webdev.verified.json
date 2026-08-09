@@ -2,13 +2,13 @@
   "dev": {
     "setupName": "dev",
     "targetHostname": "webdev",
-    "verifiedAt": "2026-08-08T22:24:51Z",
+    "verifiedAt": "2026-08-09T18:06:34Z",
     "summary": "healthy"
   },
   "prod": {
     "setupName": "prod",
     "targetHostname": "webstage",
-    "verifiedAt": "2026-08-08T22:38:14Z",
+    "verifiedAt": "2026-08-09T18:06:34Z",
     "summary": "healthy"
   }
 }
