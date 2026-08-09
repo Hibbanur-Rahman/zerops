@@ -2,7 +2,7 @@
   "dev": {
     "setupName": "dev",
     "targetHostname": "apidev",
-    "verifiedAt": "2026-08-08T22:24:51Z",
+    "verifiedAt": "2026-08-09T17:55:25Z",
     "summary": "reachable (root path not 2xx — accepted as cosmetic)"
   },
   "prod": {

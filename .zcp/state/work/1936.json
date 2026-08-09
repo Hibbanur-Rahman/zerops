@@ -12,7 +12,7 @@
     "webstage"
   ],
   "createdAt": "2026-08-08T21:04:53Z",
-  "lastActivityAt": "2026-08-09T17:52:40Z",
+  "lastActivityAt": "2026-08-09T17:55:25Z",
   "deploys": {
     "apidev": [
       {
@@ -106,6 +106,12 @@
       {
         "attemptedAt": "2026-08-08T22:24:51Z",
         "passedAt": "2026-08-08T22:24:51Z",
+        "summary": "reachable (root path not 2xx — accepted as cosmetic)",
+        "passed": true
+      },
+      {
+        "attemptedAt": "2026-08-09T17:55:25Z",
+        "passedAt": "2026-08-09T17:55:25Z",
         "summary": "reachable (root path not 2xx — accepted as cosmetic)",
         "passed": true
       }
