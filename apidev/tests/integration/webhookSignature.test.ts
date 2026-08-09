@@ -6,6 +6,7 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import type { Job } from 'bullmq';
 import { resolveTestMongo } from './mongoTestEnv.js';
+import { removeJobIfPossible } from './queueTestUtils.js';
 
 const testMongo = await resolveTestMongo();
 if (testMongo) process.env.MONGODB_URI = testMongo.uri;
