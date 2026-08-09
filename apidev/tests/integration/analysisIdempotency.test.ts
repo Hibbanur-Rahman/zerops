@@ -2,6 +2,7 @@ import '../integration/testEnv.js';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import mongoose, { Types } from 'mongoose';
 import { resolveTestMongo } from './mongoTestEnv.js';
+import { removeJobIfPossible } from './queueTestUtils.js';
 
 const testMongo = await resolveTestMongo();
 if (testMongo) process.env.MONGODB_URI = testMongo.uri;
@@ -43,8 +44,7 @@ describe.skipIf(!testMongo)('analysis idempotency', () => {
 
   afterEach(async () => {
     for (const jobId of createdJobIds.splice(0)) {
-      const job = await dependencyAnalysisQueue.getJob(jobId);
-      await job?.remove();
+      await removeJobIfPossible(dependencyAnalysisQueue, jobId);
     }
   });
 

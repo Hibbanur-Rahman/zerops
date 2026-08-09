@@ -49,8 +49,7 @@ describe.skipIf(!testMongo)('POST /api/v1/github/webhook -- signature verificati
   afterEach(async () => {
     await WebhookEvent.deleteMany({});
     for (const jobId of createdJobIds.splice(0)) {
-      const job = await githubWebhookQueue.getJob(jobId);
-      await job?.remove();
+      await removeJobIfPossible(githubWebhookQueue, jobId);
     }
   });
 

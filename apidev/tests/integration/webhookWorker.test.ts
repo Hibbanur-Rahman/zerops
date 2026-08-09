@@ -4,6 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import mongoose, { Types } from 'mongoose';
 import type { Worker } from 'bullmq';
 import { resolveTestMongo } from './mongoTestEnv.js';
+import { removeJobIfPossible, waitUntil } from './queueTestUtils.js';
 
 const testMongo = await resolveTestMongo();
 if (testMongo) process.env.MONGODB_URI = testMongo.uri;
@@ -12,24 +13,6 @@ const { Repository } = await import('../../src/models/Repository.js');
 const { WebhookEvent } = await import('../../src/models/WebhookEvent.js');
 const { githubWebhookQueue } = await import('../../src/queues/githubWebhook.queue.js');
 const { startGithubWebhookWorker } = await import('../../src/workers/githubWebhook.worker.js');
-
-function waitForJobSettled(worker: Worker, jobId: string, timeoutMs = 15000): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`Timed out waiting for job ${jobId} to settle`)), timeoutMs);
-    worker.on('completed', (job) => {
-      if (job.id === jobId) {
-        clearTimeout(timer);
-        resolve();
-      }
-    });
-    worker.on('failed', (job, err) => {
-      if (job?.id === jobId) {
-        clearTimeout(timer);
-        reject(err);
-      }
-    });
-  });
-}
 
 describe.skipIf(!testMongo)('github-webhook worker -- real BullMQ + real MongoDB, no external APIs', () => {
   let worker: Worker;
@@ -68,14 +51,22 @@ describe.skipIf(!testMongo)('github-webhook worker -- real BullMQ + real MongoDB
     });
 
     const job = await githubWebhookQueue.add('process-webhook', { webhookEventId: String(webhookEvent._id) });
-    await waitForJobSettled(worker, job.id!);
 
-    const updatedRepo = await Repository.findById(repo._id);
-    expect(updatedRepo?.monitoringEnabled).toBe(false);
-    expect(updatedRepo?.removedFromInstallationAt).toBeTruthy();
+    try {
+      // Poll DB state rather than this worker's own 'completed' event: some
+      // other worker on the same queue could win the race to claim the job,
+      // and the outcome -- not which worker did it -- is what matters here.
+      const updatedEvent = await waitUntil(async () => {
+        const event = await WebhookEvent.findById(webhookEvent._id);
+        return event?.status === 'processed' ? event : null;
+      });
+      expect(updatedEvent.processedAt).toBeTruthy();
 
-    const updatedEvent = await WebhookEvent.findById(webhookEvent._id);
-    expect(updatedEvent?.status).toBe('processed');
-    expect(updatedEvent?.processedAt).toBeTruthy();
-  });
+      const updatedRepo = await Repository.findById(repo._id);
+      expect(updatedRepo?.monitoringEnabled).toBe(false);
+      expect(updatedRepo?.removedFromInstallationAt).toBeTruthy();
+    } finally {
+      await removeJobIfPossible(githubWebhookQueue, job.id);
+    }
+  }, 20000);
 });
