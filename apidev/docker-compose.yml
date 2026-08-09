@@ -1,0 +1,93 @@
+# Runs the full stack locally: MongoDB, Redis, the backend API, a dedicated
+# worker process, and the frontend. See ../README.md "Docker" for setup.
+#
+# Assumes this backend repository and the frontend repository are checked
+# out as sibling directories named `backend` and `frontend` -- adjust the
+# frontend `build.context` path below if your layout differs.
+services:
+  mongodb:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # BullMQ requires noeviction -- see src/config/redis.ts for why the app
+    # also self-heals this at boot if a managed Redis ever resets it.
+    command: ["redis-server", "--maxmemory-policy", "noeviction"]
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      APP_URL: http://localhost:3001
+      FRONTEND_URL: http://localhost:3000
+      MONGODB_URI: mongodb://mongodb:27017/package-risk-analyzer
+      REDIS_URL: redis://redis:6379
+      # The `worker` service below runs the BullMQ workers -- don't run a
+      # second copy of them inline here too.
+      DISABLE_INLINE_WORKERS: "true"
+    ports:
+      - '3001:3001'
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+    restart: unless-stopped
+    command: ["node", "dist/worker.js"]
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongodb:27017/package-risk-analyzer
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../frontend
+      args:
+        # Baked into the client bundle -- must be reachable from the host
+        # browser, so this is the published port, not the `backend` hostname.
+        NEXT_PUBLIC_API_URL: http://localhost:3001
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:
+  redis_data:

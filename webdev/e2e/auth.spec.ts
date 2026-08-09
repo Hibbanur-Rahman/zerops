@@ -16,13 +16,37 @@ async function registerViaUi(page: import('@playwright/test').Page, user: Return
 }
 
 async function loginViaUi(page: import('@playwright/test').Page, email: string, password: string) {
-  await page.waitForLoadState('networkidle');
+  // A logout redirects here client-side (no full navigation), so wait for
+  // the login form itself to have mounted rather than for network activity,
+  // which may have already gone quiet before the SPA transition settles.
+  await expect(page.getByLabel('Email')).toBeVisible();
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
 }
 
+async function logoutViaUi(page: import('@playwright/test').Page, userName: string) {
+  // The header re-renders once the session query settles after a fresh
+  // login, which can detach/reattach the Log out button mid-click. Wait for
+  // the settled header (the user's name next to it) before clicking.
+  await expect(page.getByText(userName, { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Log out' }).click();
+}
+
 test.describe('authentication', () => {
+  test.beforeAll(async ({ browser }) => {
+    // Against `next dev`, each route compiles on its first visit, which can
+    // take longer than a normal assertion timeout and makes whichever test
+    // happens to hit an uncompiled route first look flaky. Warm every route
+    // this suite visits once, up front, against a throwaway page/context so
+    // the timed tests below never pay that cold-compile cost.
+    const page = await browser.newPage();
+    for (const path of ['/register', '/login', '/dashboard']) {
+      await page.goto(path, { waitUntil: 'networkidle' });
+    }
+    await page.close();
+  });
+
   test('registering a new account signs the user in and lands on an empty dashboard', async ({ page }) => {
     const user = uniqueUser();
     await registerViaUi(page, user);
@@ -37,7 +61,7 @@ test.describe('authentication', () => {
     await registerViaUi(page, user);
     await expect(page).toHaveURL(/\/dashboard$/);
 
-    await page.getByRole('button', { name: 'Log out' }).click();
+    await logoutViaUi(page, user.name);
     await expect(page).toHaveURL(/\/login$/);
 
     await registerViaUi(page, user);
@@ -50,7 +74,7 @@ test.describe('authentication', () => {
     const user = uniqueUser();
     await registerViaUi(page, user);
     await expect(page).toHaveURL(/\/dashboard$/);
-    await page.getByRole('button', { name: 'Log out' }).click();
+    await logoutViaUi(page, user.name);
     await expect(page).toHaveURL(/\/login$/);
 
     await loginViaUi(page, user.email, 'wrong-password-123');
@@ -59,18 +83,23 @@ test.describe('authentication', () => {
     await expect(page).toHaveURL(/\/login$/);
   });
 
-  test('a returning user can log back in, and logging out blocks protected pages', async ({ page }) => {
+  test('a returning user can log back in after logging out', async ({ page }) => {
     const user = uniqueUser();
     await registerViaUi(page, user);
     await expect(page).toHaveURL(/\/dashboard$/);
-    await page.getByRole('button', { name: 'Log out' }).click();
+    await logoutViaUi(page, user.name);
     await expect(page).toHaveURL(/\/login$/);
 
     await loginViaUi(page, user.email, user.password);
     await expect(page).toHaveURL(/\/dashboard$/);
     await expect(page.getByRole('heading', { name: `Welcome, ${user.name}` })).toBeVisible();
+  });
 
-    await page.getByRole('button', { name: 'Log out' }).click();
+  test('logging out revokes access to protected pages', async ({ page }) => {
+    const user = uniqueUser();
+    await registerViaUi(page, user);
+    await expect(page).toHaveURL(/\/dashboard$/);
+    await logoutViaUi(page, user.name);
     await expect(page).toHaveURL(/\/login$/);
 
     // A logged-out session hitting a protected route is redirected back to /login.

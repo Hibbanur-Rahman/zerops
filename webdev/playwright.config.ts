@@ -21,10 +21,20 @@ export default defineConfig({
   workers: 1,
   retries: 0,
   reporter: 'list',
+  // Against `next dev`, Next.js compiles each route on its first visit --
+  // the first navigation to a given page in a freshly-started dev server can
+  // take several seconds. That's a one-time dev-server cold-start cost (a
+  // production build or a warmed-up dev server doesn't pay it), but these
+  // defaults need enough room for it so a slow first compile isn't mistaken
+  // for a broken redirect.
+  timeout: 60000,
+  expect: { timeout: 15000 },
   use: {
     baseURL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    navigationTimeout: 20000,
+    actionTimeout: 15000,
     ...(process.env.PLAYWRIGHT_CHROMIUM_PATH
       ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH, args: ['--no-sandbox'] } }
       : {}),

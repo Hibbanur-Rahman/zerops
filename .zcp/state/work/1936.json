@@ -12,12 +12,18 @@
     "webstage"
   ],
   "createdAt": "2026-08-08T21:04:53Z",
-  "lastActivityAt": "2026-08-08T23:45:23Z",
+  "lastActivityAt": "2026-08-09T17:52:40Z",
   "deploys": {
     "apidev": [
       {
         "attemptedAt": "2026-08-08T21:24:34Z",
         "succeededAt": "2026-08-08T21:27:15Z",
+        "setup": "dev",
+        "strategy": "zcli"
+      },
+      {
+        "attemptedAt": "2026-08-09T17:44:28Z",
+        "succeededAt": "2026-08-09T17:52:39Z",
         "setup": "dev",
         "strategy": "zcli"
       }
