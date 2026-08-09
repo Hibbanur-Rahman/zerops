@@ -27,7 +27,7 @@ interface ApiFailure {
   details?: unknown;
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function requestEnvelope<T>(path: string, options: RequestInit = {}): Promise<ApiSuccess<T>> {
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
     credentials: 'include',
@@ -51,11 +51,32 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     );
   }
 
-  return (body as ApiSuccess<T>).data;
+  return body as ApiSuccess<T>;
+}
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  return (await requestEnvelope<T>(path, options)).data;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  pagination: { total: number; page: number; limit: number; totalPages: number };
+}
+
+async function requestPaginated<T>(path: string): Promise<PaginatedResult<T>> {
+  const envelope = await requestEnvelope<T[]>(path, { method: 'GET' });
+  const pagination = (envelope.meta?.pagination as PaginatedResult<T>['pagination']) ?? {
+    total: envelope.data.length,
+    page: 1,
+    limit: envelope.data.length,
+    totalPages: 1,
+  };
+  return { data: envelope.data, pagination };
 }
 
 export const apiClient = {
   get: <T>(path: string) => request<T>(path, { method: 'GET' }),
+  getPaginated: <T>(path: string) => requestPaginated<T>(path),
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: 'POST', body: body !== undefined ? JSON.stringify(body) : undefined }),
   patch: <T>(path: string, body?: unknown) =>

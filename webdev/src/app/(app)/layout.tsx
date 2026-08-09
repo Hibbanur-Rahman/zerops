@@ -2,18 +2,55 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
-import { ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, FolderGit2, GitPullRequest, ShieldAlert, Package, Settings, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { apiClient } from '@/lib/api-client';
+import { cn } from '@/lib/utils';
 import { useSession, useInvalidateSession } from '@/hooks/use-session';
 
 const NAV_LINKS = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/settings/github', label: 'GitHub' },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/repositories', label: 'Repositories', icon: FolderGit2 },
+  { href: '/pull-requests', label: 'Pull Requests', icon: GitPullRequest },
+  { href: '/findings', label: 'Findings', icon: ShieldAlert },
+  { href: '/packages', label: 'Packages', icon: Package },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
+
+function Sidebar() {
+  const pathname = usePathname();
+
+  return (
+    <aside className="hidden w-56 flex-col border-r bg-muted/30 sm:flex">
+      <div className="flex items-center gap-2 px-4 py-4 text-sm font-semibold">
+        <ShieldCheck className="size-5 text-primary" aria-hidden />
+        Package Risk Analyzer
+      </div>
+      <nav className="flex flex-col gap-0.5 px-2">
+        {NAV_LINKS.map((link) => {
+          const active = pathname === link.href || (link.href !== '/dashboard' && pathname.startsWith(link.href));
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                'flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
+                active ? 'bg-primary/10 font-medium text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+              )}
+            >
+              <link.icon className="size-4" aria-hidden />
+              {link.label}
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
+  );
+}
 
 function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -29,34 +66,18 @@ function AppShell({ children }: { children: React.ReactNode }) {
   });
 
   return (
-    <div className="flex min-h-full flex-1 flex-col">
-      <header className="flex items-center justify-between border-b px-6 py-3">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <ShieldCheck className="size-5 text-primary" aria-hidden />
-            Package Risk Analyzer
-          </div>
-          <nav className="flex items-center gap-4">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href} className="text-sm text-muted-foreground hover:text-foreground">
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-        <div className="flex items-center gap-3">
+    <div className="flex min-h-full flex-1">
+      <Sidebar />
+      <div className="flex flex-1 flex-col">
+        <header className="flex items-center justify-end gap-3 border-b px-6 py-3">
+          <ThemeToggle />
           {user && <span className="text-sm text-muted-foreground">{user.name}</span>}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => logoutMutation.mutate()}
-            disabled={logoutMutation.isPending}
-          >
+          <Button variant="ghost" size="sm" onClick={() => logoutMutation.mutate()} disabled={logoutMutation.isPending}>
             Log out
           </Button>
-        </div>
-      </header>
-      <main className="flex flex-1 flex-col">{children}</main>
+        </header>
+        <main className="flex flex-1 flex-col">{children}</main>
+      </div>
     </div>
   );
 }
