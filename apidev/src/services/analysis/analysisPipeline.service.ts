@@ -35,6 +35,12 @@ interface AggregatedChange extends DependencyChange {
  * completed analysis is a no-op, and every DB write here is itself an
  * upsert keyed on stable identifiers, so a retried job never duplicates data.
  */
+// If a worker crashes mid-analysis the doc is left stuck at "running" forever;
+// treat "running" as claimed only within this window so a retried/duplicate
+// job for the same analysis is skipped while another worker is actively on
+// it, but a genuinely orphaned analysis still gets picked back up.
+const RUNNING_CLAIM_STALE_MS = 15 * 60 * 1000;
+
 export async function runDependencyAnalysis(analysisId: string): Promise<void> {
   const analysis = await Analysis.findById(analysisId);
   if (!analysis) {
@@ -42,6 +48,14 @@ export async function runDependencyAnalysis(analysisId: string): Promise<void> {
     return;
   }
   if (analysis.status === 'completed') return;
+  if (
+    analysis.status === 'running' &&
+    analysis.startedAt &&
+    Date.now() - analysis.startedAt.getTime() < RUNNING_CLAIM_STALE_MS
+  ) {
+    logger.info({ analysisId }, 'Analysis already running elsewhere -- skipping duplicate job');
+    return;
+  }
 
   const repo = await Repository.findById(analysis.repositoryId);
   if (!repo) {
